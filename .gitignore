@@ -1,0 +1,12 @@
+# Local editor and compiled Lua artifacts
+*.luac
+luac.out
+*.swp
+*~
+.idea/
+.vscode/
+
+# Clipboard databases and temporary files must never be committed
+history
+history.new
+write.lock/
