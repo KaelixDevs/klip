@@ -1,5 +1,3 @@
--- Run: lua tests.lua /absolute/or/relative/path/to/klip.lua
--- Tests use isolated storage and Lua fake wl-clipboard commands, never your clipboard.
 local script = arg[1] or "klip.lua"
 local lua = arg[-1] or "lua"
 local function q(s) return "'" .. s:gsub("'", "'\\''") .. "'" end
@@ -51,17 +49,17 @@ local success, err = pcall(function()
   command("delete 2"); command("copy 2", "", nil, false)
   command("clear", "", nil, false)
   command("clear --yes"); assert(command("list") == "")
-  -- Retention and paging, without hundreds of child processes.
+  
   local records = {"KLIP1\n201\n"}
   for i = 200, 1, -1 do local s = "entry " .. i; records[#records + 1] = i .. " 1 " .. #s .. "\n" .. s end
   write(root .. "/data/history", table.concat(records))
   command("add", "newest")
   listing = command("list"); assert(listing:sub(1, 4) == "201\t"); assert(not listing:find("\n1\t", 1, true))
   command("menu", "n\n1\n"); assert(read(root .. "/clipboard") == "entry 189")
-  -- Failed reads must not destroy a damaged database.
+  
   write(root .. "/data/history", "broken")
   command("add", "keep old file", nil, false); assert(read(root .. "/data/history") == "broken")
-  -- Concurrent writes preserve all distinct entries.
+  
   os.remove(root .. "/data/history")
   local jobs = {}
   for i = 1, 8 do
