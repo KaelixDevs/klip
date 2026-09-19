@@ -1,5 +1,5 @@
 #!/usr/bin/env lua
--- Klip: text clipboard history for Wayland. Lua 5.1+; no Lua modules.
+
 local VERSION = "1.0.0"
 local MAX_ENTRY, MAX_TOTAL, MAX_ITEMS = 1024 * 1024, 16 * 1024 * 1024, 200
 local function quote(s) return "'" .. s:gsub("'", "'\\''") .. "'" end
@@ -24,7 +24,7 @@ local function readall(path)
   local s = f:read(MAX_TOTAL + 65537); f:close()
   return s or ""
 end
--- Length-prefixed records: clipboard contents are data, never executable Lua.
+
 local function load()
   local data = readall(db)
   if not data then return { nextid = 1, entries = {} } end
@@ -90,7 +90,7 @@ local function ingest()
     while total > MAX_TOTAL do local e = table.remove(s.entries); total = total - #e.text end
   end)
 end
--- Prevent terminal escape/control injection, including bidi formatting controls.
+
 local function preview(s)
   s = s:gsub("[\226][\128][\170-\174]", "?"):gsub("[\226][\129][\166-\169]", "?")
   s = s:gsub("\r", "\\r"):gsub("\n", "\\n"):gsub("\t", "\\t"):gsub("[%z\1-\31\127]", "?")
